@@ -6,7 +6,7 @@ public class Capsule{
                                       en que posicion poner esa pieza nueva generada*/
     private boolean estateCapsule;//me va a decir si la capsula esta vacia y necesita una pieza;
     public int dimension;
-
+  // debo inicializar los arreglos.
       public Capsule(){
           this.numberCapsule = 3; // por ahora coloco el 3 de esta manera;
 
