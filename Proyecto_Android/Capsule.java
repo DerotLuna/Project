@@ -13,7 +13,7 @@ public class Capsule{
       }
 
       public int getNumberCapsule(){
-        return this.numberCapsule;
+        return this.numberCapsule; //no estoy seguro de que sea un metodo necesario.
       }
 
       public void generate_Piece(){
@@ -27,7 +27,6 @@ public class Capsule{
 
         Random randomPieceId = new Random();
         int number = randomPieceId.nextInt((18)+1);
-        this.piece.generate_Piece(number);//el generar lo decide la pieza no Capsule, por lo tanto delega
         
           if number = 1 {
           instancio la pieza y llamo al metodo tal para construirla
@@ -36,7 +35,8 @@ public class Capsule{
           else ......
           y asi sucesivamente hasta el 18.
             - me parece que es enrollarse mucho al realizarlo de esta manera,son 18 metodos
-            que hay que hacer dentro de piece, y este metodo lo realizaria capsule.
+            que hay que hacer dentro de piece, y este metodo lo realizaria capsule. 
+            De la otra manera es bastante engorroso crear 18 subclases para crear cada una de las piezas.
         }
                         necesito una idea de como asignar la pieza a la capsula */
 
