@@ -1,4 +1,4 @@
-ic abstract class Board {
+public class Board {
 
   private String shape;
   private Layer[] layer;
@@ -12,7 +12,7 @@ ic abstract class Board {
     return this.shape;
   }
 
-  public abstract int getIdBox(int positionY , int positionX);
+
 
 }
 /*recordatorio: necesito la relacion entre casillas para la vecindad.
