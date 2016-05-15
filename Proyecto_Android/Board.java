@@ -1,7 +1,7 @@
 public class Board {
 
   private String shape;
-  private Layer[] layer;
+ // private Layer[] layer;
 
   public Board(String shape){
     this.shape = shape;
