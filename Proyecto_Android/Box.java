@@ -1,14 +1,12 @@
 public class Box {
   //atributos
   private int id;
-  private int boxPosition;
   private Status statusBox;
 
 
-  public Box(int boxPosition,Status statusBox){
-    this.boxPosition = boxPosition;
+  public Box(int id,Status statusBox){
+    this.id = id; // pensar mejor la obtencion del id de una casilla
     this.statusBox = statusBox;
-    this.id =//pensar la manera de conseguir el id de una casilla.
   }
 
   public void getId(){
