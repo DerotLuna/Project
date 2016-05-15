@@ -20,8 +20,8 @@ public class Square_Board extends Board{
   /*for (int row = 0; row < dimension ; row++){ matriz de Adyacencias
       for (int column = 0; column <dimension ; column++){
          this. matrixAdjacency[row][column] = false;
-                      **CODIGO**
-      } 
+                      **FALTA CODIGO**
+      solo es una idea} 
     }*/
 
   }
