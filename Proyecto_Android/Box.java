@@ -16,7 +16,11 @@ public class Box {
   public Status getStatus(){
     return this.statusBox;
   }
+  
+  public boolean validatesBox(){// ya vere que pasar por parametro
+    /*este metodo me funcionara para verificar si la casilla esta ocupada o vacia*/
+    if (this.statusBox = statusBox.EMPTY) return true;
+    else return false;
 
-
-
+  }
 }
