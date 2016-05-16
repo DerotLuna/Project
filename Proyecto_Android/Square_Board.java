@@ -3,15 +3,18 @@ public class Square_Board extends Board{
   private int dimension;
   private String shape;
   private Box[] boxes;
+  private int boxesCounter;
   public boolean[][] matrixAdjacency;
   public Status statusBox;
+  
   public Square_Board(int dimension, String shape){
     super(shape);
     this.dimension = dimension;
-    this.boxes[] = new Box[dimension*dimension];//si es 10*10 seran 100 casillas en total.
+    this.boxesCounter = dimension*dimension;
+    this.boxes[] = new Box[boxesCounter];//si es 10*10 seran 100 casillas en total.
     this.matrixAdjacency[][] = new boolean[dimension][dimension];
 
-    for (int numberBox = 0; countBoxes < dimension ; countBoxes++){
+    for (int numberBox = 0; numberBox < boxesCounter ; numberBoxes++){
     //aca se crean las casillas del tablero.
       boxes[numberBox] = new Box(numberBox , this.statusBox.EMPTY);//cuando se crean por ahora se colocaran libres.
     }
