@@ -64,7 +64,7 @@ public class SquareBoard extends Board{
       else if(typePiece == "L") checked = lEvaluation(sizePiece, positionBox, checked);
       else if(typePiece == "L LEFT") checked = leftLEvaluation(sizePiece, positionBox, checked);
       else if (typePiece == "L INVESTED") checked = investedLEvaluation(sizePiece, positionBox, checked);
-      else checked = investedLEvaluation(sizePiece, positionBox, checked);
+      else checked = leftInvestedLEvaluation(sizePiece, positionBox, checked);
       if ((answer == 0) && (checked))  addPiece(typePiece, sizePiece, positionBox);
 
     return checked;
@@ -127,7 +127,7 @@ public class SquareBoard extends Board{
             }
           }
           else{
-            if ((positionBox > numberOfBoxes - sizeLine)|| !neighborhood[positionBox][positionBox + 1]){
+            if ((positionBox > numberOfBoxes - sizeLine) || !neighborhood[positionBox][positionBox + 1]){
               checked = false;
               break;
             }
@@ -173,164 +173,144 @@ public class SquareBoard extends Board{
 
   public boolean lEvaluation(byte lSize ,int positionBox ,boolean checked){
     //Aqui se evaluan las piezas en forma de L normal, de cualquier size en su parte mas larga.
+    //errores corregidos, ahora esta pieza no se coloca en cualquier sitio.
     int pivot = positionBox;
     byte exitCounter = 0;
+    boolean verifyWay = false;//esta es la variable que me dara la senal para recorrer mi L por columnas o por filas.
+    /* mi pivote siempre estara en el vertice de la L
+       PD: no queria usar el break y por eso los quite.*/
 
-    while(exitCounter < lSize){
-      if ((positionBox > numberOfBoxes) || (positionBox >= numberOfBoxes - dimension) || !(neighborhood[pivot][pivot + 1])){ //falta un condicional
-        checked = false;
-        break;
-      }
-      else {
-        if (pivot == positionBox){
-          if ((boxes[pivot].getStatus() == STATUS_FREE) && (boxes[pivot + 1].getStatus() == STATUS_FREE)) pivot += dimension;
-          else{
-            checked = false;
-            break;
+      while ((exitCounter < lSize) && (checked)){// begin loop
+
+          if(!verifyWay){
+            if (pivot + 1 >= numberOfBoxes) pivot -= 1;//esta condicion se realiza para que no se pase del arreglo booleano de la matriz de adyacencia y no me de un exception.
+            if ( (positionBox >= numberOfBoxes - (lSize / 2)) || (positionBox >= numberOfBoxes - 1) || (!neighborhood[pivot][pivot + 1])) checked = false;
+            else{
+              if (boxes[pivot].getStatus() == STATUS_FREE) pivot ++;
+              else checked = false;
+            }
           }
-        }
-        else {
-          if (((boxes[pivot].getStatus()) == STATUS_FREE)) pivot++;
-          else{
-            checked = false;
-            break;
+          else {
+            if (pivot < 0) checked = false; // aca no es necesario verificar la vecindad de casillas;
+            else {
+              if (boxes[pivot].getStatus() == STATUS_FREE) pivot -= dimension;
+              else checked = false;
+            }
           }
-        }
-      }
-      exitCounter ++;
-     }
+
+          if (exitCounter == lSize / 2){
+          verifyWay = true;
+          pivot = positionBox - dimension;
+          }
+
+      exitCounter++;
+      }//end loop
+    System.out.println("/////////////////////" + lSize/2);
     return checked;
   }
 
-  public boolean leftLEvaluation(byte sizeOfPiece ,int positionBox ,boolean checked){
+  public boolean leftLEvaluation(byte lSize ,int positionBox ,boolean checked){
     //Aqui se evaluan las piezas en forma de L pero hacia la izquierda, de cualquier size en su parte mas larga.
       byte exitCounter = 0;
-      int counterJump = positionBox - dimension;
+      boolean verifyWay = false;
+      int pivot = positionBox;
+      /*corregido los errores de la colocacion de esta pieza, ahora se posiciona de manera correcta*/
 
-      while(exitCounter < sizeOfPiece){
-        if ((positionBox <= dimension) || (positionBox > numberOfBoxes) || !(neighborhood[counterJump][counterJump + 1])){ //or (neighborhood[][])
-          checked = false;
-          break;
-        }
-        else {
-          if ((boxes[positionBox].getStatus() == STATUS_FREE) && (boxes[counterJump + 1].getStatus() == STATUS_FREE)) positionBox++;
+    while ((exitCounter < lSize) && (checked)){
+        if (!verifyWay){
+          if (pivot - 1 >= 0) pivot += 1;
+          if ((positionBox < dimension*(lSize / 2)) || (positionBox < dimension) || (!neighborhood[pivot][pivot - 1])) checked = false;
           else{
-            checked = false;
-            break;
-          }
-
-          if (exitCounter == (sizeOfPiece - 1)){
-            positionBox -= dimension;
-            if ((boxes[positionBox].getStatus() == STATUS_FREE) && (boxes[positionBox + 1].getStatus() == STATUS_FREE)) positionBox++;
-            else{
-              checked = false;
-              break;
-            }
+            if (boxes[pivot].getStatus() == STATUS_FREE) pivot --;
+            else checked = false;
           }
         }
-        exitCounter++;
+        else{
+          if (pivot < 0) checked = false;// no hay necesidad de verificar la vecindad entre casillas
+          else{
+            if (boxes[pivot].getStatus() == STATUS_FREE) pivot -= dimension;
+            else checked = false;
+          }
+        }
+
+        if (exitCounter == lSize / 2){
+          verifyWay = true;
+          pivot = positionBox - dimension;
+        }
+
+      exitCounter++;
       }
+      System.out.println("/////////////////////" + lSize/2);
       return checked;
   }
 
-  public boolean investedLEvaluation(byte sizeOfPiece ,int positionBox ,boolean checked){
+  public boolean investedLEvaluation(byte lSize ,int positionBox ,boolean checked){
     //Aqui se evaluan las L invertidas, de cualquier size en su parte mas larga.
     byte exitCounter = 0;
-    int upCounter = positionBox - dimension;
-
-    while(exitCounter < sizeOfPiece){
-      if (upCounter < 0){
-        checked = false;
-        break;
-      }
-      if ((positionBox > numberOfBoxes)){
-        checked = false;
-        break;
-      }
-      else {
-        if (exitCounter == 0){
-          if (!neighborhood[upCounter][positionBox]){
-            checked = false;
-            break;
-          }
-          else{
-            if ((boxes[positionBox].getStatus() == STATUS_FREE) && (boxes[upCounter].getStatus() == STATUS_FREE)) positionBox -= dimension;
-            else {
-              checked = false;
-              break;
-            }
-          }
-        }
-        else {
-          if(!neighborhood[upCounter][positionBox + 1]){
-            checked = false;
-            break;
-          }
-          else{
-            if (boxes[positionBox + 1].getStatus() == STATUS_FREE){
-              positionBox ++;
-              upCounter++;
-            }
+    boolean verifyWay = false;
+    int pivot = positionBox;
+    // me esta dando un error con la vecindad, ARREGLAR!!!!.
+      while ((exitCounter < lSize) && (checked)){
+          if (!verifyWay){
+            if (pivot + 1 >= numberOfBoxes) pivot -= 1;
+            if ((positionBox > numberOfBoxes - dimension*(lSize / 2 )) || (positionBox > numberOfBoxes) || (!neighborhood[pivot][pivot + 1])) checked = false; // error de vecindad, me esta verificando un valor que nunca me dejara colocar.
             else{
-              checked = false;
-              break;
+              if (boxes[pivot].getStatus() == STATUS_FREE) pivot ++;
+              else checked = false;
             }
           }
-        }
-      }
+          else{
+            if (pivot > numberOfBoxes) checked = false;// no hay necesidad de verificar la vecindad entre casillas
+            else{
+              if (boxes[pivot].getStatus() == STATUS_FREE) pivot += dimension;
+              else checked = false;
+            }
+          }
+
+          if (exitCounter == lSize / 2){
+            verifyWay = true;
+            pivot = positionBox + dimension;
+          }
       exitCounter ++;
-    }
+      }
+    System.out.println("/////////pieza l invertidas////////////" + lSize/2);
     return checked;
   }
 
-  public boolean leftInvestedLEvaluation(byte sizeOfPiece ,int positionBox ,boolean checked){
+  public boolean leftInvestedLEvaluation(byte lSize ,int positionBox ,boolean checked){
     //Aqui se evaluan las piezas en forma de L invertidas y a las izquierda, de cualquier size en su parte mas larga.
     byte exitCounter = 0;
-    byte counterJump = 1;
+    boolean verifyWay = false;
+    int pivot = positionBox;
+    /*error, esta pieza se esta colocando en sitios que no se deben.
+      se debe corregir el algoritmo*/
 
-    while (exitCounter < sizeOfPiece){
-      if ((positionBox > numberOfBoxes) || (positionBox >= numberOfBoxes - dimension)){
-        checked = false;
-        break;
+    while ((exitCounter < lSize) && (checked)){
+      if (!verifyWay){
+        if (pivot - 1 < 0) pivot += 1;
+        if ((positionBox < lSize /2) || (!neighborhood[pivot][pivot - 1])) checked = false;
+        else{
+          System.out.println("/////////pase por aca y se cumplio la condicion ////////////");
+          if (boxes[pivot].getStatus() == STATUS_FREE) pivot --;
+          else checked = false;
+        }
       }
-      else {
-        if (counterJump == sizeOfPiece - 1){
-            if (!neighborhood[positionBox][positionBox + dimension]){
-              checked = false;
-              break;
-            }
-            else {
-              if (boxes[positionBox].getStatus() == STATUS_FREE) positionBox += dimension;
-              else {
-                checked = false;
-                break;
-              }
-            }
+      else{
+        if (pivot > numberOfBoxes) checked = false;// no hay necesidad de verificar la vecindad entre casillas
+        else{
+          if (boxes[pivot].getStatus() == STATUS_FREE) pivot += dimension;
+          else checked = false;
         }
-        else if (counterJump < sizeOfPiece -1){
-          if (!neighborhood[positionBox][positionBox + 1]){
-            checked = false;
-            break;
-          }
-          else {
-            if (boxes[positionBox].getStatus() == STATUS_FREE) positionBox ++;
-            else {
-              checked = false;
-              break;
-            }
-          }
-        }
-        else {
-          if (boxes[positionBox].getStatus() == STATUS_FREE) positionBox ++;
-          else{
-            checked = false;
-            break;
-          }
-        }
-        counterJump++;
-        exitCounter++;
       }
+
+      if (exitCounter == lSize / 2){
+        verifyWay = true;
+        pivot = positionBox + dimension;
+      }
+      System.out.println("////////devuelvo ciclo/////////////");
+      exitCounter++;
     }
+    System.out.println("///////ya sali del ciclo y retorno//////////////" + lSize/2);
     return checked;
   }
 
@@ -367,52 +347,98 @@ public class SquareBoard extends Board{
     }
   }
 
-  public void addL(byte sizeL, int positionBox){
-      byte exitCounter = 0;
+  public void addL(byte lSize, int positionBox){
+    byte exitCounter = 0;
+    int pivot = positionBox;
+    boolean verifyWay = false;
 
-      while (exitCounter < sizeL){
-        boxes[positionBox].setStatus(STATUS_FULL);
-          if (exitCounter == 0) positionBox += dimension;
-          else positionBox ++;
-        exitCounter ++;
+      while (exitCounter < lSize){
+        if (!verifyWay){
+          boxes[pivot].setStatus(STATUS_FULL);
+          pivot++;
+        }
+        else {
+          boxes[pivot].setStatus(STATUS_FULL);
+          pivot -= dimension;
+        }
+
+        if (exitCounter == lSize / 2){
+          verifyWay = true;
+          pivot -= dimension;
+        }
+      exitCounter ++;
       }
     }
 
 
-    public void addLeftL(byte sizeLeftL, int positionBox){
+    public void addLeftL(byte lSize, int positionBox){
       byte exitCounter = 0;
-      byte counterJump = 1;
+      boolean verifyWay = false;
+      int pivot = positionBox;
 
-      while (exitCounter < sizeLeftL){
-        boxes[positionBox].setStatus(STATUS_FULL);
-          if (counterJump == sizeLeftL - 1) positionBox -= dimension;
-          else positionBox ++;
-        exitCounter ++;
-        counterJump ++;
+      while (exitCounter < lSize){
+        if (!verifyWay){
+          boxes[pivot].setStatus(STATUS_FULL);
+          pivot --;
+        }
+        else {
+          boxes[pivot].setStatus(STATUS_FULL);
+          pivot -= dimension;
+        }
+
+        if (exitCounter == lSize / 2){
+          verifyWay = true;
+          pivot -= dimension;
+        }
+      exitCounter ++;
+
       }
     }
 
-    public void addInvestedL(byte sizeInvestedL, int positionBox){
+    public void addInvestedL(byte lSize, int positionBox){
       byte exitCounter = 0;
+      int pivot = positionBox;
+      boolean verifyWay = false;
 
-      while (exitCounter < sizeInvestedL){
-        boxes[positionBox].setStatus(STATUS_FULL);
-          if (exitCounter == 0) positionBox -= dimension;
-          else positionBox ++;
-        exitCounter ++;
+      while (exitCounter < lSize){
+        if (!verifyWay){
+          boxes[pivot].setStatus(STATUS_FULL);
+          pivot++;
+        }
+        else {
+          boxes[pivot].setStatus(STATUS_FULL);
+          pivot += dimension;
+        }
+
+        if (exitCounter == lSize / 2){
+          verifyWay = true;
+          pivot += dimension;
+        }
+      exitCounter ++;
+
       }
     }
 
-    public void addLeftInvestedL(byte sizeInvestedLeftL, int positionBox){
+    public void addLeftInvestedL(byte lSize, int positionBox){
       byte exitCounter = 0;
-      byte counterJump = 1;
+      boolean verifyWay = false;
+      int pivot = positionBox;
 
-      while (exitCounter < sizeInvestedLeftL){
-        boxes[positionBox].setStatus(STATUS_FULL);
-          if (counterJump == sizeInvestedLeftL - 1)positionBox += dimension;
-          else positionBox ++;
-        counterJump ++;
-        exitCounter ++;
+      while (exitCounter < lSize){
+        if (!verifyWay){
+          boxes[pivot].setStatus(STATUS_FULL);
+          pivot--;
+        }
+        else {
+          boxes[pivot].setStatus(STATUS_FULL);
+          pivot += dimension;
+        }
+
+        if (exitCounter == lSize / 2){
+          verifyWay = true;
+          pivot += dimension;
+        }
+        exitCounter++;
       }
     }
 
