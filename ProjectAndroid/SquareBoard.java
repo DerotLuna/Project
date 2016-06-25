@@ -234,8 +234,14 @@ public class SquareBoard extends Board{
         else{
           if (pivot < 0) checked = false;// no hay necesidad de verificar la vecindad entre casillas
           else{
-            if (boxes[pivot].getStatus() == STATUS_FREE) pivot -= dimension;
-            else checked = false;
+            if (pivot < dimension){
+              if (boxes[pivot].getStatus() == STATUS_FREE) dimension -= pivot;
+              else checked = false;
+            }
+            else{
+              if (boxes[pivot].getStatus() == STATUS_FREE) pivot -= dimension;
+              else checked = false;
+            }
           }
         }
       exitCounter++;
@@ -252,28 +258,36 @@ public class SquareBoard extends Board{
     // me esta dando un error con la vecindad, ARREGLAR!!!!.
       while ((exitCounter < lSize) && (checked)){
           if (!verifyWay){
-            if (pivot + 1 >= numberOfBoxes) pivot -= 1;
-            if ((positionBox > numberOfBoxes - dimension*(lSize / 2 )) || (positionBox > numberOfBoxes) || (!neighborhood[pivot][pivot + 1])) checked = false; // error de vecindad, me esta verificando un valor que nunca me dejara colocar.
+            if (exitCounter != lSize/2){
+                System.out.println("///////////////1//////" + pivot);
+              if ((positionBox > numberOfBoxes - (dimension * (lSize/2))) || (!neighborhood[pivot][pivot + 1])) checked = false;
+              else{
+                if (boxes[pivot].getStatus() == STATUS_FREE) pivot ++;
+                else checked = false;
+                System.out.println("///////////////2//////" +pivot);
+              }
+            }
             else{
-              if (boxes[pivot].getStatus() == STATUS_FREE) pivot ++;
-              else checked = false;
+                if (boxes[pivot].getStatus() == STATUS_FREE) pivot = positionBox + dimension;
+                else checked = false;
+                verifyWay = true;
+                System.out.println("////////////3/////////" + pivot);
             }
           }
           else{
-            if (pivot > numberOfBoxes) checked = false;// no hay necesidad de verificar la vecindad entre casillas
-            else{
-              if (boxes[pivot].getStatus() == STATUS_FREE) pivot += dimension;
-              else checked = false;
+            System.out.println("////////////checked/////////" + pivot);
+             if (pivot > numberOfBoxes) checked = false;// no hay necesidad de verificar la vecindad entre casillas
+             else{
+               System.out.println("/////////////////4////" + pivot);
+               if (boxes[pivot].getStatus() == STATUS_FREE) pivot += dimension;
+               else checked = false;
+               System.out.println("///////5//////////////" + pivot);
             }
           }
 
-          if (exitCounter == lSize / 2){
-            verifyWay = true;
-            pivot = positionBox + dimension;
-          }
       exitCounter ++;
       }
-    System.out.println("/////////pieza l invertidas////////////" + lSize/2);
+    System.out.println("/////////pieza l invertidas////////////" + pivot);
     return checked;
   }
 
@@ -288,9 +302,9 @@ public class SquareBoard extends Board{
     while ((exitCounter < lSize) && (checked)){
       if (!verifyWay){
         if (pivot - 1 < 0) pivot += 1;
-        if ((positionBox < lSize /2) || (!neighborhood[pivot][pivot - 1])) checked = false;
+        if ((positionBox < lSize /2 -1) || (!neighborhood[pivot][pivot - 1])) checked = false;
         else{
-          System.out.println("/////////pase por aca y se cumplio la condicion ////////////");
+          System.out.println("/////////pase por aca y se cumplio la condicion ////////////" + pivot);
           if (boxes[pivot].getStatus() == STATUS_FREE) pivot --;
           else checked = false;
         }
@@ -307,7 +321,7 @@ public class SquareBoard extends Board{
         verifyWay = true;
         pivot = positionBox + dimension;
       }
-      System.out.println("////////devuelvo ciclo/////////////");
+      System.out.println("/////////////////////");
       exitCounter++;
     }
     System.out.println("///////ya sali del ciclo y retorno//////////////" + lSize/2);
@@ -364,7 +378,7 @@ public class SquareBoard extends Board{
 
         if (exitCounter == lSize / 2){
           verifyWay = true;
-          pivot -= dimension;
+          pivot =  positionBox - dimension;
         }
       exitCounter ++;
       }
@@ -388,7 +402,7 @@ public class SquareBoard extends Board{
 
         if (exitCounter == lSize / 2){
           verifyWay = true;
-          pivot -= dimension;
+          pivot = positionBox - dimension;
         }
       exitCounter ++;
 
@@ -412,7 +426,7 @@ public class SquareBoard extends Board{
 
         if (exitCounter == lSize / 2){
           verifyWay = true;
-          pivot += dimension;
+          pivot = positionBox + dimension;
         }
       exitCounter ++;
 
@@ -436,7 +450,7 @@ public class SquareBoard extends Board{
 
         if (exitCounter == lSize / 2){
           verifyWay = true;
-          pivot += dimension;
+          pivot = positionBox + dimension;
         }
         exitCounter++;
       }
