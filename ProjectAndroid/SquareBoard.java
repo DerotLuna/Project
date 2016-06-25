@@ -218,11 +218,17 @@ public class SquareBoard extends Board{
 
     while ((exitCounter < lSize) && (checked)){
         if (!verifyWay){
-          if (pivot - 1 >= 0) pivot += 1;
-          if ((positionBox < dimension*(lSize / 2)) || (positionBox < dimension) || (!neighborhood[pivot][pivot - 1])) checked = false;
+          if (exitCounter != lSize/2){
+            if ((positionBox < dimension*(lSize / 2)) || (!neighborhood[pivot][pivot - 1])) checked = false;
+            else{
+              if (boxes[pivot].getStatus() == STATUS_FREE) pivot --;
+              else checked = false;
+            }
+          }
           else{
-            if (boxes[pivot].getStatus() == STATUS_FREE) pivot --;
-            else checked = false;
+              if (boxes[pivot].getStatus() == STATUS_FREE) pivot = positionBox - dimension;
+              else checked = false;
+              verifyWay = true;
           }
         }
         else{
@@ -232,12 +238,6 @@ public class SquareBoard extends Board{
             else checked = false;
           }
         }
-
-        if (exitCounter == lSize / 2){
-          verifyWay = true;
-          pivot = positionBox - dimension;
-        }
-
       exitCounter++;
       }
       System.out.println("/////////////////////" + lSize/2);
